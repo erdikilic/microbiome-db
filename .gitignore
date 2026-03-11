@@ -1,0 +1,10 @@
+data/
+*.parquet
+__pycache__/
+*.pyc
+*.egg-info/
+dist/
+build/
+.eggs/
+*.gz
+.venv/
