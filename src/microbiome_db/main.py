@@ -17,8 +17,10 @@ def cli():
 
 def _register_sources():
     from microbiome_db.sources.gmrepo import cli as gmrepo_cli
+    from microbiome_db.sources.microbiomehd import cli as mhd_cli
 
     cli.add_command(gmrepo_cli, "gmrepo")
+    cli.add_command(mhd_cli, "microbiomehd")
 
 
 _register_sources()
