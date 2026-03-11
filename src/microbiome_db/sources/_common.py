@@ -1,16 +1,24 @@
-import gzip
 import time
+from pathlib import Path
 
 import requests
 from tqdm import tqdm
 
-from gmrepo.config import FILES, GMREPO_BASE, RAW_DIR
+# _common.py -> sources/ -> microbiome_db/ -> src/ -> project root
+ROOT_DIR = Path(__file__).resolve().parent.parent.parent.parent
 
 
-def download_file(url: str, dest, force: bool = False, retries: int = 3) -> None:
+def source_dirs(source_name: str) -> tuple[Path, Path, Path]:
+    """Return (raw_dir, intermediate_dir, processed_dir) for a source."""
+    base = ROOT_DIR / "data" / "sources" / source_name
+    return base / "raw", base / "intermediate", base / "processed"
+
+
+def download_file(url: str, dest: Path, force: bool = False, retries: int = 3) -> None:
+    """Download a file with progress bar and retry logic."""
     dest.parent.mkdir(parents=True, exist_ok=True)
     if dest.exists() and not force:
-        print(f"  Skipping {dest.name} (exists, use --force to re-download)")
+        print(f"  Skipping {dest.name} (exists)")
         return
 
     for attempt in range(1, retries + 1):
@@ -29,8 +37,6 @@ def download_file(url: str, dest, force: bool = False, retries: int = 3) -> None
                 for chunk in resp.iter_content(chunk_size=8192):
                     f.write(chunk)
                     bar.update(len(chunk))
-
-            _verify_gzip(dest)
             return
 
         except (requests.RequestException, OSError) as e:
@@ -43,22 +49,3 @@ def download_file(url: str, dest, force: bool = False, retries: int = 3) -> None
                 raise RuntimeError(
                     f"Failed to download {dest.name} after {retries} attempts: {e}"
                 ) from e
-
-
-def _verify_gzip(path) -> None:
-    try:
-        with gzip.open(path, "rb") as f:
-            f.read(1)
-    except gzip.BadGzipFile as e:
-        path.unlink(missing_ok=True)
-        raise RuntimeError(f"{path.name} is not a valid gzip file") from e
-
-
-def download_all(force: bool = False) -> None:
-    RAW_DIR.mkdir(parents=True, exist_ok=True)
-    for name, filename in FILES.items():
-        url = f"{GMREPO_BASE}/{filename}"
-        dest = RAW_DIR / filename
-        print(f"Downloading {name} ({filename})...")
-        download_file(url, dest, force=force)
-    print("All downloads complete.")

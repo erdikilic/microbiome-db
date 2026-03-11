@@ -1,17 +1,16 @@
-# GMrepo v3
+# microbiome-db
 
-Pipeline for building sparse abundance matrices and sample metadata from [GMrepo](https://gmrepo.humangut.info/) SQL dumps.
+Multi-source pipeline for building sparse abundance matrices and sample metadata from public human gut microbiome databases.
 
-## What it produces
+## Sources
 
-| Output | Description |
-|--------|-------------|
-| `genus_abundance.parquet` | 68,723 samples x 2,214 genera (WGS + 16S) |
-| `species_abundance.parquet` | 26,993 samples x 2,894 species (WGS only) |
-| `metadata.parquet` | 68,653 samples x 13 clinical/technical columns |
-| `taxonomy.parquet` | 5,191 taxa with full lineage |
-
-Species-level data is only available for whole-genome sequencing (WGS) samples. 16S amplicon samples are limited to genus-level resolution due to insufficient sequence variation in V3-V4 regions.
+| Source | Samples | Genus | Species | Metadata | Status |
+|--------|---------|-------|---------|----------|--------|
+| [GMrepo](https://gmrepo.humangut.info/) | 68,723 | 2,214 | 2,894 (WGS only) | 13 columns | Done |
+| [curatedMetagenomicData](https://waldronlab.io/curatedMetagenomicData/) | ~20,000 | Yes | Yes | Curated | Planned |
+| [MicrobiomeHD](https://zenodo.org/records/569601) | ~3,500 | Yes | No (16S) | Case/control | Planned |
+| [QIITA](https://qiita.ucsd.edu/) | 460,000+ | Yes | Varies | Rich | Planned |
+| [gutMEGA](https://gutmega.omicsbio.info/) | 776 phenotypes | Yes | Yes | Phenotype-level | Planned |
 
 ## Install
 
@@ -21,30 +20,29 @@ pip install -e .
 
 ## Usage
 
-Run the full pipeline (download, parse, build, validate):
+Each source has its own subcommand with `download`, `parse`, `build`, `validate`, and `run` steps:
 
 ```bash
-gmrepo run
-```
-
-Or run steps individually:
-
-```bash
-gmrepo download        # fetch SQL dumps from GMrepo
-gmrepo parse           # convert to intermediate Parquet
-gmrepo build           # build abundance matrices + metadata
-gmrepo validate        # check output integrity
+microbiome-db gmrepo run           # GMrepo full pipeline
+microbiome-db gmrepo validate      # validate outputs only
+microbiome-db run-all              # all sources
 ```
 
 ## Data layout
 
 ```
-data/
-  raw/                  # downloaded .txt.gz files
-  intermediate/         # parsed Parquet (one per source file)
-  processed/            # final outputs
+data/sources/
+  gmrepo/{raw,intermediate,processed}/
+  cmd/{raw,processed}/
+  microbiomehd/{raw,intermediate,processed}/
+  qiita/{raw,processed}/
+  gutmega/{raw,processed}/
 ```
+
+Each source outputs Parquet files independently. No cross-source taxonomy harmonization.
 
 ## Requirements
 
 Python >= 3.10, pandas, pyarrow, requests, click, tqdm.
+
+Optional: `pip install -e ".[qiita]"` for QIITA/redbiom support.

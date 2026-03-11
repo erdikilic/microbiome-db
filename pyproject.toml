@@ -1,7 +1,7 @@
 [project]
-name = "gmrepo"
-version = "3.0.0"
-description = "GMrepo gut metagenome abundance and metadata pipeline"
+name = "microbiome-db"
+version = "1.0.0"
+description = "Multi-source microbiome abundance and metadata pipeline"
 requires-python = ">=3.10"
 dependencies = [
     "pandas>=2.0",
@@ -13,9 +13,10 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=7.0"]
+qiita = ["redbiom>=0.3.0", "biom-format>=2.1.5"]
 
 [project.scripts]
-gmrepo = "gmrepo.main:cli"
+microbiome-db = "microbiome_db.main:cli"
 
 [build-system]
 requires = ["setuptools>=68.0"]

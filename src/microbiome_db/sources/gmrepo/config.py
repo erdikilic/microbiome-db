@@ -10,9 +10,9 @@ FILES = {
     "taxonomy": "superkingdom2descendents.txt.gz",
 }
 
-ROOT_DIR = Path(__file__).resolve().parent.parent.parent
-RAW_DIR = ROOT_DIR / "data" / "raw"
-INTERMEDIATE_DIR = ROOT_DIR / "data" / "intermediate"
-PROCESSED_DIR = ROOT_DIR / "data" / "processed"
+ROOT_DIR = Path(__file__).resolve().parent.parent.parent.parent.parent
+RAW_DIR = ROOT_DIR / "data" / "sources" / "gmrepo" / "raw"
+INTERMEDIATE_DIR = ROOT_DIR / "data" / "sources" / "gmrepo" / "intermediate"
+PROCESSED_DIR = ROOT_DIR / "data" / "sources" / "gmrepo" / "processed"
 
 CHUNK_SIZE = 10_000

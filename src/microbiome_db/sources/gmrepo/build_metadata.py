@@ -2,7 +2,7 @@ import logging
 
 import pandas as pd
 
-from gmrepo.config import INTERMEDIATE_DIR, PROCESSED_DIR
+from microbiome_db.sources.gmrepo.config import INTERMEDIATE_DIR, PROCESSED_DIR
 
 logger = logging.getLogger(__name__)
 

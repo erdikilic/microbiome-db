@@ -1,25 +1,17 @@
-import logging
-
 import click
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s %(levelname)s %(name)s: %(message)s",
-    datefmt="%H:%M:%S",
-)
 
 
 @click.group()
 def cli():
-    """GMrepo v3 — abundance & metadata pipeline."""
+    """GMrepo v3 — human gut metagenome abundance database."""
     pass
 
 
 @cli.command()
 @click.option("--force", is_flag=True, help="Re-download even if files exist")
 def download(force):
-    """Download raw data from GMrepo."""
-    from gmrepo.download import download_all
+    """Download raw SQL dumps from GMrepo."""
+    from microbiome_db.sources.gmrepo.download import download_all
 
     download_all(force=force)
 
@@ -27,16 +19,16 @@ def download(force):
 @cli.command()
 def parse():
     """Parse raw .txt.gz files into intermediate Parquet."""
-    from gmrepo.parse import parse_all
+    from microbiome_db.sources.gmrepo.parse import parse_all
 
     parse_all()
 
 
 @cli.command()
 def build():
-    """Build abundance matrices and metadata from intermediate data."""
-    from gmrepo.build_abundance import build_abundance
-    from gmrepo.build_metadata import build_metadata, build_taxonomy
+    """Build abundance matrices and metadata."""
+    from microbiome_db.sources.gmrepo.build_abundance import build_abundance
+    from microbiome_db.sources.gmrepo.build_metadata import build_metadata, build_taxonomy
 
     build_taxonomy()
     build_abundance()
@@ -46,7 +38,7 @@ def build():
 @cli.command()
 def validate():
     """Validate all processed outputs."""
-    from gmrepo.validate import validate as run_validate
+    from microbiome_db.sources.gmrepo.validate import validate as run_validate
 
     ok = run_validate()
     raise SystemExit(0 if ok else 1)
@@ -55,12 +47,12 @@ def validate():
 @cli.command()
 @click.option("--force", is_flag=True, help="Re-download even if files exist")
 def run(force):
-    """Run full pipeline: download → parse → build → validate."""
-    from gmrepo.build_abundance import build_abundance
-    from gmrepo.build_metadata import build_metadata, build_taxonomy
-    from gmrepo.download import download_all
-    from gmrepo.parse import parse_all
-    from gmrepo.validate import validate as run_validate
+    """Run full pipeline: download -> parse -> build -> validate."""
+    from microbiome_db.sources.gmrepo.build_abundance import build_abundance
+    from microbiome_db.sources.gmrepo.build_metadata import build_metadata, build_taxonomy
+    from microbiome_db.sources.gmrepo.download import download_all
+    from microbiome_db.sources.gmrepo.parse import parse_all
+    from microbiome_db.sources.gmrepo.validate import validate as run_validate
 
     print("=== Step 1/4: Download ===")
     download_all(force=force)
@@ -76,7 +68,3 @@ def run(force):
     print("\n=== Step 4/4: Validate ===")
     ok = run_validate()
     raise SystemExit(0 if ok else 1)
-
-
-if __name__ == "__main__":
-    cli()
