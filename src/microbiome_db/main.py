@@ -19,10 +19,12 @@ def _register_sources():
     from microbiome_db.sources.cmd import cli as cmd_cli
     from microbiome_db.sources.gmrepo import cli as gmrepo_cli
     from microbiome_db.sources.microbiomehd import cli as mhd_cli
+    from microbiome_db.sources.qiita import cli as qiita_cli
 
     cli.add_command(gmrepo_cli, "gmrepo")
     cli.add_command(mhd_cli, "microbiomehd")
     cli.add_command(cmd_cli, "cmd")
+    cli.add_command(qiita_cli, "qiita")
 
 
 _register_sources()

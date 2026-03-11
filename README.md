@@ -9,7 +9,7 @@ Multi-source pipeline for building sparse abundance matrices and sample metadata
 | [GMrepo](https://gmrepo.humangut.info/) | 68,723 | 2,214 | 2,894 (WGS only) | 13 columns | Done |
 | [MicrobiomeHD](https://zenodo.org/records/569601) | 5,343 | 1,143 | No (16S) | 29 studies, 13 diseases | Done |
 | [curatedMetagenomicData](https://waldronlab.io/curatedMetagenomicData/) | 21,030 | 493 | 1,645 (WGS) | 17 columns, 86 studies | Done |
-| [QIITA](https://qiita.ucsd.edu/) | 460,000+ | Yes | Varies | Rich | Blocked (API 403) |
+| [QIITA](https://qiita.ucsd.edu/) | 7,244 | 818 | No (16S) | 593 columns | Done |
 
 ## Install
 
@@ -25,6 +25,7 @@ Each source has its own subcommand with `download`, `parse`, `build`, `validate`
 microbiome-db gmrepo run           # GMrepo full pipeline
 microbiome-db microbiomehd run     # MicrobiomeHD full pipeline
 microbiome-db cmd run              # curatedMetagenomicData (requires R)
+microbiome-db qiita run            # QIITA via redbiom (requires redbiom)
 microbiome-db gmrepo validate      # validate outputs only
 microbiome-db run-all              # all sources
 ```
@@ -36,7 +37,7 @@ data/sources/
   gmrepo/{raw,intermediate,processed}/
   cmd/{raw,processed}/
   microbiomehd/{raw,intermediate,processed}/
-  qiita/{raw,processed}/          # blocked
+  qiita/{raw,processed}/
 ```
 
 Each source outputs Parquet files independently. No cross-source taxonomy harmonization.
@@ -47,4 +48,4 @@ Python >= 3.10, pandas, pyarrow, requests, click, tqdm.
 
 curatedMetagenomicData requires R with the Bioconductor package installed (`conda install -c bioconda bioconductor-curatedmetagenomicdata`).
 
-Optional: `pip install -e ".[qiita]"` for QIITA/redbiom support (currently blocked by API access).
+Optional: `pip install -e ".[qiita]"` for QIITA/redbiom support.
